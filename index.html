@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Chatアプリ</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- コンテンツ表示画面 -->
+<div class="area">
+    <div>名前<input type="text" id="username"></div>
+    <div>
+        <!-- メッセージ入力欄 -->
+        <textarea name="" id="text" cols="30" rows="5"></textarea>
+        <!-- 送信ボタン -->
+        <button id="send">送信</button>
+    </div>
+<!-- チャット文字をリスト表示 -->
+    <div id="output"></div>
+
+</div>
+
+
+
+
+
+<!-- 以下JavaScript領域 -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<!-- 以下Firebase -->
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.14.2/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-database.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+    https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-analytics.js"></script>
+
+<script>
+  // Your web app's Firebase configuration
+    var firebaseConfig = {
+    apiKey: "AIzaSyBaVxaE_uIh2xFYRIIJhcTWPGxjWapdAFg",
+    authDomain: "gschat-8f6ce.firebaseapp.com",
+    databaseURL: "https://gschat-8f6ce.firebaseio.com",
+    projectId: "gschat-8f6ce",
+    storageBucket: "gschat-8f6ce.appspot.com",
+    messagingSenderId: "725434484287",
+    appId: "1:725434484287:web:29cac86cee70c5aac05a8a",
+    measurementId: "G-MDZ8HTVT0G"
+    };
+  // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+
+// MSG送受信準備
+let newPostRef = firebase.database().ref();
+
+// 作成日時取得
+function createTime() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const date = now.getDate();
+    const hour = now.getHours();
+    const min = now.getMinutes();
+    const time = year + "/ " + (month+1) + "/ " + date + "/ " + set2fig(hour) + ":" + set2fig(min);
+    return time;
+}
+
+// 桁数を2桁に調整
+function set2fig(num) {
+    let ret = num;
+    if( num < 10 ) { ret = "0" + num; }
+    return ret;
+}
+
+// 送信処理関数定義
+function  sendmsg(){
+    let time = createTime();
+    newPostRef.push({
+        username: $("#username").val(),
+        time: time,
+        text: $("#text").val()
+    });
+    $("#text").val("");
+}
+
+// 送信処理
+$("#send").on("click", function(){
+    sendmsg();
+});
+
+// keydownイベント
+$("#text").on("keydown", function(e){
+    console.log(e);
+    if(e.keyCode==13){
+        sendmsg();
+    }
+});
+
+
+
+
+
+// 受信処理
+newPostRef.on("child_added", function(data){
+    const v = data.val();
+    const k = data.key;
+    const str =`
+        <dl class="msg_box" id=${k}>
+        <dt>${v.username}</dt>
+        <dd class="msg_content">${v.text}</dd><dd class="msg_time">${v.time}</dd>
+        <dl>`;
+    
+    console.log(k);
+    $("#output").prepend(str);
+});
+
+
+
+
+
+
+
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+@charset "utf-8";
+
+body{
+    color: white;
+}
+.area{
+    background-color: #696969;
+    margin: 0 auto;
+    height: 100vh;
+    width: 400px;
+}
+.msg_content{
+    background-color: black;
+    opacity: 0.7;
+    display: inline;
+    padding: 0 10px;
+    border-radius: 20px;
+}
+.msg_box{
+    margin-bottom: 50px;
+}
+.msg_time{
+    float: right;
+}
+#output{
+    padding: 0 15px;
+}
